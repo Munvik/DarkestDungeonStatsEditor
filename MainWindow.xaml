@@ -121,7 +121,7 @@
 
             <!-- Global checkboxes -->
             <StackPanel Margin="0,10,0,0">
-                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Apply to weapons" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Apply to weapon" Margin="0,2,0,0" Foreground="White"/>
                 <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Apply to armour" Margin="0,2,0,0" Foreground="White"/>
                 <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Apply to all heroes" Margin="0,2,0,0" Foreground="White"/>
 
@@ -163,7 +163,7 @@
                         Foreground="White">
 
                 <!-- WEAPONS -->
-                <TabItem Header="Weapons">
+                <TabItem Header="Weapon">
                     <DockPanel Background="#1E1E1E">
                         <DataGrid x:Name="WeaponsGrid"
                                   ItemsSource="{Binding SelectedWeapons}"
