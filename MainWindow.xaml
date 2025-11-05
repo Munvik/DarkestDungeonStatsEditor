@@ -81,6 +81,13 @@
                     BorderBrush="#777"
                     Click="LoadFiles_Click"/>
 
+            <Button x:Name="LoadFolderButton"
+                    Content="Wczytaj folder postaci"
+                    Margin="0,5,0,0"
+                    Padding="5"
+                    Click="LoadFolderButton_Click"/>
+
+
             <Button x:Name="SaveFileButton"
                     Content="💾 Zapisz zmiany"
                     Margin="0,5,0,0"
@@ -96,7 +103,7 @@
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="PercentBox"
                          Width="60"
-                         Text="10"
+                         Text="25"
                          Background="#2d2d2d"
                          Foreground="White"
                          BorderBrush="#555"
@@ -113,9 +120,17 @@
 
             <!-- Checkboxy globalne -->
             <StackPanel Margin="0,10,0,0">
-                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Zastosuj do broni" Margin="0,2,0,0"/>
-                <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Zastosuj do zbroi" Margin="0,2,0,0"/>
-                <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Zastosuj do wszystkich postaci" Margin="0,2,0,0"/>
+                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Zastosuj do broni" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Zastosuj do zbroi" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Zastosuj do wszystkich postaci" Margin="0,2,0,0" Foreground="White"/>
+
+                <CheckBox x:Name="ChkGlobalFromOriginal"
+                      Content="Od wartości oryginalnej"
+                      IsChecked="True"
+                      Margin="20,0,0,0"
+                      Foreground="#FFD700"
+                      FontWeight="Bold"
+                      FontSize="13"/>
             </StackPanel>
 
             <Separator Margin="0,15,0,10" Background="#555"/>
@@ -131,10 +146,11 @@
             BorderBrush="#777"
             Click="ResetButton_Click"/>
                 <CheckBox x:Name="ResetAllCheck"
-              Content="Resetuj wszystkie"
-              Margin="10,0,0,0"
-              VerticalAlignment="Center"
-              Foreground="White"/>
+                    Content="Resetuj wszystkie"
+                    IsChecked="True"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="White"/>
             </StackPanel>
         </StackPanel>
 
@@ -200,7 +216,7 @@
                             <StackPanel>
                                 <TextBlock Text="Zakładkowe opcje" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBox x:Name="WeaponPercentBox" Width="60" Text="10" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
+                                    <TextBox x:Name="WeaponPercentBox" Width="60" Text="25" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
                                     <Button Content="Zastosuj %"
                                             Margin="5,0,10,0"
                                             Padding="6"
@@ -208,9 +224,9 @@
                                             Foreground="White"
                                             BorderBrush="#777"
                                             Click="ApplyWeaponTabPercent_Click"/>
-                                    <CheckBox x:Name="ApplyDamageCheck" IsChecked="True" Content="Damage" Margin="0,0,5,0"/>
-                                    <CheckBox x:Name="ApplyCritCheck" IsChecked="True" Content="Crit" Margin="0,0,5,0"/>
-                                    <CheckBox x:Name="ApplySpeedCheck" IsChecked="True" Content="Speed" Margin="0,0,5,0"/>
+                                    <CheckBox x:Name="ApplyDamageCheck" IsChecked="True" Content="Damage" Margin="0,0,5,0" Foreground="White"/>
+                                    <CheckBox x:Name="ApplyCritCheck" IsChecked="True" Content="Crit" Margin="0,0,5,0" Foreground="White"/>
+                                    <CheckBox x:Name="ApplySpeedCheck" IsChecked="True" Content="Speed" Margin="0,0,5,0" Foreground="White"/>
                                     <CheckBox x:Name="ChkWeaponsFromOriginal"
                                               IsChecked="True"
                                               Content="Od wartości oryginalnej"
@@ -289,8 +305,8 @@
                                             Foreground="White"
                                             BorderBrush="#777"
                                             Click="ApplyArmourTabPercent_Click"/>
-                                    <CheckBox x:Name="ApplyHpCheck" IsChecked="True" Content="Hp" Margin="0,0,5,0"/>
-                                    <CheckBox x:Name="ApplyDefCheck" IsChecked="True" Content="Def" Margin="0,0,5,0"/>
+                                    <CheckBox x:Name="ApplyHpCheck" IsChecked="True" Content="Hp" Margin="0,0,5,0" Foreground="White"/>
+                                    <CheckBox x:Name="ApplyDefCheck" IsChecked="True" Content="Def" Margin="0,0,5,0" Foreground="White"/>
                                     <CheckBox x:Name="ChkArmoursFromOriginal"
                                               IsChecked="True"
                                               Content="Od wartości oryginalnej"

@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using System.Windows.Forms;
+using System.IO;
 
 namespace DDStatsMod
 {
@@ -50,13 +52,13 @@ namespace DDStatsMod
 
         private void LoadFiles_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new OpenFileDialog
+            var dlg = new System.Windows.Forms.OpenFileDialog
             {
                 Multiselect = true,
                 Filter = "Darkest Dungeon Info|*.info.darkest"
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 foreach (var path in dlg.FileNames)
                 {
@@ -81,6 +83,44 @@ namespace DDStatsMod
             }
         }
 
+        private void LoadFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Wybierz folder z plikami .info.darkest";
+                dialog.UseDescriptionForTitle = true;
+
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string selectedFolder = dialog.SelectedPath;
+                    string[] files = Directory.GetFiles(selectedFolder, "*.info.darkest", SearchOption.AllDirectories);
+
+                    foreach (var path in files)
+                    {
+                        string backupPath = path + ".original";
+                        if (!File.Exists(backupPath))
+                            File.Copy(path, backupPath);
+
+                        var hero = new HeroFile
+                        {
+                            Path = path,
+                            Lines = File.ReadAllLines(path)
+                        };
+
+                        hero.Weapons = ParseWeapons(hero.Lines.ToList());
+                        hero.Armours = ParseArmours(hero.Lines.ToList());
+
+                        loadedHeroes.Add(hero);
+                    }
+
+                    HeroesList.ItemsSource = null;
+                    HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
+                    System.Windows.MessageBox.Show($"Załadowano {files.Length} plików z folderu:\n{selectedFolder}");
+                }
+            }
+        }
+
+
         private void HeroesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (HeroesList.SelectedIndex < 0) return;
@@ -92,58 +132,108 @@ namespace DDStatsMod
 
         private void SaveFile_Click(object sender, RoutedEventArgs e)
         {
-            if (HeroesList.SelectedIndex < 0)
+            if (loadedHeroes.Count == 0)
             {
-                MessageBox.Show("Wybierz postać z listy.");
+                System.Windows.MessageBox.Show("Nie załadowano żadnych postaci do zapisania.");
                 return;
             }
 
-            var hero = loadedHeroes[HeroesList.SelectedIndex];
-            SaveHeroToFile(hero);
-            MessageBox.Show($"Zapisano zmiany dla {hero.Name}");
+            int savedCount = 0;
+
+            foreach (var hero in loadedHeroes)
+            {
+                SaveHeroToFile(hero);
+                savedCount++;
+            }
+
+            System.Windows.MessageBox.Show(
+                $"Zapisano zmiany dla wszystkich ({savedCount}) postaci.",
+                "Zapis zakończony",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
+
 
         private void ApplyPercentAll_Click(object sender, RoutedEventArgs e)
         {
             if (!double.TryParse(PercentBox.Text.Replace("%", ""), out double percent))
             {
-                MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
                 return;
             }
 
-            var targets = ApplyAllHeroesCheck.IsChecked == true ? loadedHeroes : new List<HeroFile>();
-            if (ApplyAllHeroesCheck.IsChecked == false && HeroesList.SelectedIndex >= 0)
+            bool applyAll = ApplyAllHeroesCheck.IsChecked == true;
+            bool fromOriginal = ChkGlobalFromOriginal != null && ChkGlobalFromOriginal.IsChecked == true;
+
+            var targets = applyAll ? loadedHeroes : new List<HeroFile>();
+            if (!applyAll && HeroesList.SelectedIndex >= 0)
                 targets.Add(loadedHeroes[HeroesList.SelectedIndex]);
 
             foreach (var hero in targets)
             {
+                var baseHero = fromOriginal ? LoadOriginalHero(hero) : hero;
+
                 if (ApplyWeaponsCheck.IsChecked == true)
                 {
-                    foreach (var w in hero.Weapons)
+                    var updatedWeapons = new List<Weapon>();
+
+                    foreach (var baseW in baseHero.Weapons)
                     {
-                        w.DmgMin = ApplyPercent(w.DmgMin, percent);
-                        w.DmgMax = ApplyPercent(w.DmgMax, percent);
-                        w.Crit = ApplyPercent(w.Crit, percent);
-                        w.Spd = ApplyPercent(w.Spd, percent);
+                        var newW = new Weapon
+                        {
+                            Name = baseW.Name,
+                            DmgMin = ApplyPercent(baseW.DmgMin, percent),
+                            DmgMax = ApplyPercent(baseW.DmgMax, percent),
+                            Crit = ApplyPercent(baseW.Crit, percent),
+                            Spd = ApplyPercent(baseW.Spd, percent),
+                            RawLine = baseW.RawLine
+                        };
+
+                        updatedWeapons.Add(newW);
                     }
+
+                    hero.Weapons = updatedWeapons;
                 }
 
                 if (ApplyArmoursCheck.IsChecked == true)
                 {
-                    foreach (var a in hero.Armours)
-                    {
-                        a.Def = ApplyPercent(a.Def, percent);
-                        a.Hp = ApplyPercent(a.Hp, percent);
-                        a.Spd = ApplyPercent(a.Spd, percent);
-                    }
-                }
+                    var updatedArmours = new List<Armour>();
 
-                SaveHeroToFile(hero);
+                    foreach (var baseA in baseHero.Armours)
+                    {
+                        var newA = new Armour
+                        {
+                            Name = baseA.Name,
+                            Def = ApplyPercent(baseA.Def, percent),
+                            Prot = ApplyPercent(baseA.Prot, percent),
+                            Hp = ApplyPercent(baseA.Hp, percent),
+                            Spd = ApplyPercent(baseA.Spd, percent),
+                            RawLine = baseA.RawLine
+                        };
+
+                        updatedArmours.Add(newA);
+                    }
+
+                    hero.Armours = updatedArmours;
+                }
             }
 
-            WeaponsGrid.Items.Refresh();
-            ArmoursGrid.Items.Refresh();
-            MessageBox.Show("Zastosowano modyfikację procentową.");
+            // 🔥 Odświeżenie aktualnie wyświetlonego bohatera w DataGridach
+            if (HeroesList.SelectedIndex >= 0)
+            {
+                var currentHero = loadedHeroes[HeroesList.SelectedIndex];
+                WeaponsGrid.ItemsSource = null;
+                WeaponsGrid.ItemsSource = currentHero.Weapons;
+                ArmoursGrid.ItemsSource = null;
+                ArmoursGrid.ItemsSource = currentHero.Armours;
+            }
+
+            System.Windows.MessageBox.Show(
+                "Zastosowano modyfikację procentową (bez zapisu do plików).\nAby zapisać zmiany, kliknij 'Zapisz zmiany'.",
+                "Zmiany zastosowane",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private static int ApplyPercent(int val, double percent)
@@ -342,7 +432,7 @@ namespace DDStatsMod
         {
             if (HeroesList.SelectedIndex < 0)
             {
-                MessageBox.Show("Wybierz postać z listy.");
+                System.Windows.MessageBox.Show("Wybierz postać z listy.");
                 return;
             }
 
@@ -350,7 +440,7 @@ namespace DDStatsMod
 
             if (!double.TryParse(WeaponPercentBox.Text.Replace("%", ""), out double percent))
             {
-                MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
                 return;
             }
 
@@ -368,7 +458,7 @@ namespace DDStatsMod
                 }
                 else
                 {
-                    MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
+                    System.Windows.MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
                     baseWeapons = hero.Weapons.Select(w => CloneWeapon(w)).ToList();
                 }
             }
@@ -424,7 +514,7 @@ namespace DDStatsMod
         {
             if (HeroesList.SelectedIndex < 0)
             {
-                MessageBox.Show("Wybierz postać z listy.");
+                System.Windows.MessageBox.Show("Wybierz postać z listy.");
                 return;
             }
 
@@ -432,7 +522,7 @@ namespace DDStatsMod
 
             if (!double.TryParse(ArmourPercentBox.Text.Replace("%", ""), out double percent))
             {
-                MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
                 return;
             }
 
@@ -450,7 +540,7 @@ namespace DDStatsMod
                 }
                 else
                 {
-                    MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
+                    System.Windows.MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
                     baseArmours = hero.Armours.Select(a => CloneArmour(a)).ToList();
                 }
             }
@@ -496,97 +586,6 @@ namespace DDStatsMod
             };
         }
 
-
-        //private void ApplyWeaponsPercent_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (HeroesList.SelectedIndex < 0)
-        //    {
-        //        MessageBox.Show("Wybierz postać z listy.");
-        //        return;
-        //    }
-
-        //    var hero = loadedHeroes[HeroesList.SelectedIndex];
-
-        //    if (!double.TryParse(WeaponPercentBox.Text.Replace("%", ""), out double percent))
-        //    {
-        //        MessageBox.Show("Niepoprawna wartość procentowa!");
-        //        return;
-        //    }
-
-        //    bool fromOriginal = ChkWeaponsFromOriginal.IsChecked == true;
-        //    var baseHero = fromOriginal ? LoadOriginalHero(hero) : hero;
-
-        //    // Tworzymy nową listę wynikową, zamiast modyfikować istniejącą
-        //    var newWeapons = new List<Weapon>();
-
-        //    foreach (var baseW in baseHero.Weapons)
-        //    {
-        //        var newW = new Weapon
-        //        {
-        //            Name = baseW.Name,
-        //            DmgMin = baseW.DmgMin,
-        //            DmgMax = baseW.DmgMax,
-        //            Crit = baseW.Crit,
-        //            Spd = baseW.Spd,
-        //            RawLine = baseW.RawLine
-        //        };
-
-        //        if (ApplyDamageCheck.IsChecked == true)
-        //        {
-        //            newW.DmgMin = ApplyPercent(baseW.DmgMin, percent);
-        //            newW.DmgMax = ApplyPercent(baseW.DmgMax, percent);
-        //        }
-        //        if (ApplyCritCheck.IsChecked == true)
-        //            newW.Crit = ApplyPercent(baseW.Crit, percent);
-        //        if (ApplySpeedCheck.IsChecked == true)
-        //            newW.Spd = ApplyPercent(baseW.Spd, percent);
-
-        //        newWeapons.Add(newW);
-        //    }
-
-        //    // Nadpisujemy całą kolekcję, żeby wynik zawsze był deterministyczny
-        //    hero.Weapons = newWeapons;
-
-        //    WeaponsGrid.ItemsSource = hero.Weapons;
-        //    WeaponsGrid.Items.Refresh();
-        //}
-
-
-
-        //private void ApplyArmoursPercent_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (HeroesList.SelectedIndex < 0)
-        //    {
-        //        MessageBox.Show("Wybierz postać z listy.");
-        //        return;
-        //    }
-
-        //    var hero = loadedHeroes[HeroesList.SelectedIndex];
-
-        //    if (!double.TryParse(ArmourPercentBox.Text.Replace("%", ""), out double percent))
-        //    {
-        //        MessageBox.Show("Niepoprawna wartość procentowa!");
-        //        return;
-        //    }
-
-        //    bool fromOriginal = ChkArmoursFromOriginal.IsChecked == true;
-        //    var baseHero = fromOriginal ? LoadOriginalHero(hero) : hero;
-
-        //    foreach (var a in hero.Armours)
-        //    {
-        //        var baseA = baseHero.Armours.FirstOrDefault(x => x.Name == a.Name);
-        //        if (baseA == null) continue;
-
-        //        if (ApplyHpCheck.IsChecked == true)
-        //            a.Hp = ApplyPercent(baseA.Hp, percent);
-        //        if (ApplyDefCheck.IsChecked == true)
-        //            a.Def = ApplyPercent(baseA.Def, percent);
-        //    }
-
-        //    ArmoursGrid.Items.Refresh();
-        //}
-
-
         private HeroFile LoadOriginalHero(HeroFile hero)
         {
             string originalPath = hero.Path + ".original";
@@ -613,11 +612,12 @@ namespace DDStatsMod
             {
                 foreach (var hero in loadedHeroes)
                 {
-                    ResetHeroToOriginal(hero);
+                    ResetHeroInMemory(hero);
                 }
 
-                MessageBox.Show(
-                    "Wszystkie postacie zostały przywrócone do oryginalnych wartości.",
+                RefreshView();
+                System.Windows.MessageBox.Show(
+                    "Wszystkie postacie zostały przywrócone do oryginalnych wartości w pamięci.",
                     "Reset zakończony",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -626,7 +626,7 @@ namespace DDStatsMod
             {
                 if (HeroesList.SelectedIndex < 0)
                 {
-                    MessageBox.Show(
+                    System.Windows.MessageBox.Show(
                         "Nie wybrano żadnej postaci do resetu.",
                         "Brak wyboru",
                         MessageBoxButton.OK,
@@ -635,25 +635,63 @@ namespace DDStatsMod
                 }
 
                 var hero = loadedHeroes[HeroesList.SelectedIndex];
-                ResetHeroToOriginal(hero);
-
-                MessageBox.Show(
-                    $"Przywrócono oryginalne wartości dla postaci: {hero.Name}.",
+                ResetHeroInMemory(hero);
+                RefreshView();
+                System.Windows.MessageBox.Show(
+                    $"Przywrócono oryginalne wartości dla postaci: {hero.Name} w pamięci.",
                     "Reset zakończony",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
 
-            WeaponsGrid.Items.Refresh();
-            ArmoursGrid.Items.Refresh();
+            void RefreshView()
+            {
+                // Odświeżenie widoku po resecie
+                if (HeroesList.SelectedIndex >= 0)
+                {
+                    var currentHero = loadedHeroes[HeroesList.SelectedIndex];
+                    WeaponsGrid.ItemsSource = null;
+                    WeaponsGrid.ItemsSource = currentHero.Weapons;
+                    ArmoursGrid.ItemsSource = null;
+                    ArmoursGrid.ItemsSource = currentHero.Armours;
+                    WeaponsGrid.Items.Refresh();
+                    ArmoursGrid.Items.Refresh();
+                }
+                else
+                {
+                    WeaponsGrid.ItemsSource = null;
+                    ArmoursGrid.ItemsSource = null;
+                }
+            }
         }
+
+        // Nowa metoda resetująca tylko w pamięci
+        private void ResetHeroInMemory(HeroFile hero)
+        {
+            string originalPath = hero.Path + ".original";
+            if (!File.Exists(originalPath))
+            {
+                System.Windows.MessageBox.Show($"Brak kopii oryginalnej dla {hero.Name} ({originalPath})");
+                return;
+            }
+
+            // Odczytaj oryginalne dane
+            var originalLines = File.ReadAllLines(originalPath).ToList();
+            hero.Lines = originalLines.ToArray();
+            hero.Weapons = ParseWeapons(originalLines);
+            hero.Armours = ParseArmours(originalLines);
+
+            // NIE zapisujemy do pliku, zmiany są tylko w pamięci
+        }
+
+
 
         private void ResetHeroToOriginal(HeroFile hero)
         {
             string originalPath = hero.Path + ".original";
             if (!File.Exists(originalPath))
             {
-                MessageBox.Show($"Brak kopii oryginalnej dla {hero.Name} ({originalPath})");
+                System.Windows.MessageBox.Show($"Brak kopii oryginalnej dla {hero.Name} ({originalPath})");
                 return;
             }
 
