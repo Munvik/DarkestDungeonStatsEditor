@@ -386,5 +386,94 @@ namespace DDStatsMod
 
             ArmoursGrid.Items.Refresh();
         }
+
+        private void ApplyWeaponsPercent_Click(object sender, RoutedEventArgs e)
+        {
+            if (HeroesList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Wybierz postać z listy.");
+                return;
+            }
+
+            var hero = loadedHeroes[HeroesList.SelectedIndex];
+            if (!double.TryParse(WeaponPercentBox.Text.Replace("%", ""), out double percent))
+            {
+                MessageBox.Show("Niepoprawna wartość procentowa!");
+                return;
+            }
+
+            bool fromOriginal = ChkWeaponsFromOriginal.IsChecked == true;
+            var baseHero = fromOriginal ? LoadOriginalHero(hero) : hero;
+
+            for (int i = 0; i < hero.Weapons.Count; i++)
+            {
+                var w = hero.Weapons[i];
+                var baseW = baseHero.Weapons.FirstOrDefault(x => x.Name == w.Name);
+                if (baseW == null) continue;
+
+                if (ApplyDamageCheck.IsChecked == true)
+                {
+                    w.DmgMin = ApplyPercent(baseW.DmgMin, percent);
+                    w.DmgMax = ApplyPercent(baseW.DmgMax, percent);
+                }
+                if (ApplyCritCheck.IsChecked == true)
+                    w.Crit = ApplyPercent(baseW.Crit, percent);
+                if (ApplySpeedCheck.IsChecked == true)
+                    w.Spd = ApplyPercent(baseW.Spd, percent);
+            }
+
+            WeaponsGrid.Items.Refresh();
+        }
+
+        private void ApplyArmoursPercent_Click(object sender, RoutedEventArgs e)
+        {
+            if (HeroesList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Wybierz postać z listy.");
+                return;
+            }
+
+            var hero = loadedHeroes[HeroesList.SelectedIndex];
+            if (!double.TryParse(ArmourPercentBox.Text.Replace("%", ""), out double percent))
+            {
+                MessageBox.Show("Niepoprawna wartość procentowa!");
+                return;
+            }
+
+            bool fromOriginal = ChkArmoursFromOriginal.IsChecked == true;
+            var baseHero = fromOriginal ? LoadOriginalHero(hero) : hero;
+
+            for (int i = 0; i < hero.Armours.Count; i++)
+            {
+                var a = hero.Armours[i];
+                var baseA = baseHero.Armours.FirstOrDefault(x => x.Name == a.Name);
+                if (baseA == null) continue;
+
+                if (ApplyHpCheck.IsChecked == true)
+                    a.Hp = ApplyPercent(baseA.Hp, percent);
+                if (ApplyDefCheck.IsChecked == true)
+                    a.Def = ApplyPercent(baseA.Def, percent);
+            }
+
+            ArmoursGrid.Items.Refresh();
+        }
+
+        private HeroFile LoadOriginalHero(HeroFile hero)
+        {
+            string originalPath = hero.Path + ".original";
+            if (!File.Exists(originalPath))
+                return hero; // jeśli nie ma backupu, używamy bieżących danych
+
+            var copy = new HeroFile
+            {
+                Path = originalPath,
+                Lines = File.ReadAllLines(originalPath)
+            };
+
+            copy.Weapons = ParseWeapons(copy.Lines.ToList());
+            copy.Armours = ParseArmours(copy.Lines.ToList());
+
+            return copy;
+        }
     }
 }
