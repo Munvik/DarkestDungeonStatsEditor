@@ -6,11 +6,9 @@ A powerful and intuitive Windows application designed to help you quickly modify
 
 ## 📸 Preview
 
-![Main Interface](docs/screenshots/main-interface.png)
-*The main interface showing the hero list, weapons tab, and global modification options*
+![Weapon edit view](docs/screenshots/DDEditorPreview1.png)
 
-![Armor Editing](docs/screenshots/armor-editing.png)
-*Armor tab with defense, protection, and HP statistics*
+![Armor edit view](docs/screenshots/DDEditorPreview2.png)
 
 > **Note:** Screenshots showcase the dark-themed interface with Darkest Dungeon-inspired styling, organized data grids for easy stat viewing, and intuitive controls for batch modifications.
 
