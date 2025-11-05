@@ -1,0 +1,182 @@
+﻿<Window x:Class="DDStatsMod.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Help - Darkest Dungeon Stats Editor"
+        Width="700"
+        Height="600"
+        Background="#1E1E1E"
+        Foreground="White"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Title -->
+                <TextBlock Text="Darkest Dungeon Stats Editor - Help"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,20"/>
+
+                <!-- Overview Section -->
+                <TextBlock Text="Overview"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22">
+                    This tool allows you to modify character statistics in Darkest Dungeon by editing .info.darkest files.
+                    You can adjust weapon damage, critical chance, speed, armour defense, protection, and health points.
+                </TextBlock>
+
+                <!-- Loading Files Section -->
+                <TextBlock Text="📂 Loading Files"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    <Bold>Load files:</Bold> Select individual .info.darkest character files to modify.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    <Bold>Load character folder:</Bold> Load all .info.darkest files from a selected folder and its subfolders.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22"
+                           Foreground="#AAAAAA">
+                    Note: When you load files for the first time, a backup (.original) is automatically created.
+                </TextBlock>
+
+                <!-- Editing Stats Section -->
+                <TextBlock Text="✏️ Editing Stats"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    Select a character from the Heroes list to view and edit their weapon and armour stats in the tabs.
+                    You can directly edit values in the data grid or use percentage-based modifications.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22">
+                    <Bold>Weapons Tab:</Bold> Modify damage (min/max), critical chance, and speed.<LineBreak/>
+                    <Bold>Armour Tab:</Bold> Modify defense, protection, health points, and speed.
+                </TextBlock>
+
+                <!-- Global Modification Section -->
+                <TextBlock Text="⚙️ Global Modification"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    Enter a percentage value and click "Apply %" to modify all stats by that percentage.
+                    Positive values increase stats, negative values decrease them.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    <Bold>Apply to weapons:</Bold> Affects weapon damage, crit, and speed.<LineBreak/>
+                    <Bold>Apply to armour:</Bold> Affects armour defense, protection, HP, and speed.<LineBreak/>
+                    <Bold>Apply to all heroes:</Bold> Applies changes to all loaded characters.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22"
+                           Foreground="#FFD700">
+                    <Bold>From original value:</Bold> When checked (gold color), percentages are calculated from the original backup values, not current values.
+                </TextBlock>
+
+                <!-- Tab Options Section -->
+                <TextBlock Text="📊 Tab Options"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    Each tab (Weapons and Armour) has its own percentage modification controls at the bottom.
+                    Use checkboxes to select which specific stats to modify, then click "Apply %".
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22">
+                    These options only affect the currently selected character.
+                </TextBlock>
+
+                <!-- Saving and Resetting Section -->
+                <TextBlock Text="💾 Saving and Resetting"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    <Bold>Save changes:</Bold> Writes all modifications to the .info.darkest files. Changes are only saved when you click this button.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    <Bold>Reset:</Bold> Restores character stats to original backup values in memory (not saved to file until you click "Save changes").
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,20"
+                           LineHeight="22">
+                    <Bold>Reset all:</Bold> When checked, resets all loaded characters; when unchecked, resets only the selected character.
+                </TextBlock>
+
+                <!-- Tips Section -->
+                <TextBlock Text="💡 Tips"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#FFD700"
+                           Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    • Original backup files (.original) are created automatically on first load and are never modified.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    • Use "From original value" option to stack multiple percentage modifications correctly.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,5"
+                           LineHeight="22">
+                    • All modifications are applied in memory first. Click "Save changes" to write them to disk.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="0,0,0,30"
+                           LineHeight="22">
+                    • You can edit values directly in the data grid for precise control.
+                </TextBlock>
+
+                <!-- Close Button -->
+                <Button Content="Close"
+                        Width="100"
+                        Padding="8"
+                        HorizontalAlignment="Center"
+                        Background="#444"
+                        Foreground="White"
+                        BorderBrush="#777"
+                        Click="CloseButton_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

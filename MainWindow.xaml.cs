@@ -704,5 +704,14 @@ namespace DDStatsMod
             File.WriteAllLines(hero.Path, originalLines);
         }
 
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var helpWindow = new HelpWindow
+            {
+                Owner = this
+            };
+            helpWindow.ShowDialog();
+        }
+
     }
 }

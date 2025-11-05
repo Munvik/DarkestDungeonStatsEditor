@@ -153,6 +153,17 @@
                     VerticalAlignment="Center"
                     Foreground="White"/>
             </StackPanel>
+
+            <Separator Margin="0,15,0,10" Background="#555"/>
+
+            <Button x:Name="HelpButton"
+                    Content="❓ Help"
+                    Margin="0,5,0,0"
+                    Padding="6"
+                    Background="#444"
+                    Foreground="White"
+                    BorderBrush="#777"
+                    Click="HelpButton_Click"/>
         </StackPanel>
 
         <!-- Right panel -->
