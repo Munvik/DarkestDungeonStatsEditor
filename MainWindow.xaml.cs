@@ -47,6 +47,24 @@ namespace DDStatsMod
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Checks if a file contains hero data by looking for weapon or armour lines.
+        /// Returns true if the file is a hero file, false if it's a monster or other file.
+        /// </summary>
+        private bool IsHeroFile(string[] lines)
+        {
+            foreach (var line in lines)
+            {
+                var trimmed = line.TrimStart();
+                if (trimmed.StartsWith("weapon:", StringComparison.OrdinalIgnoreCase) ||
+                    trimmed.StartsWith("armour:", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void LoadFiles_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new System.Windows.Forms.OpenFileDialog
@@ -57,26 +75,67 @@ namespace DDStatsMod
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                int loadedCount = 0;
+                int skippedCount = 0;
+                int errorCount = 0;
+
                 foreach (var path in dlg.FileNames)
                 {
-                    string backupPath = path + ".original";
-                    if (!File.Exists(backupPath))
-                        File.Copy(path, backupPath);
-
-                    var hero = new HeroFile
+                    try
                     {
-                        Path = path,
-                        Lines = File.ReadAllLines(path)
-                    };
+                        var lines = File.ReadAllLines(path);
 
-                    hero.Weapons = ParseWeapons(hero.Lines.ToList());
-                    hero.Armours = ParseArmours(hero.Lines.ToList());
+                        // Check if this is a hero file (has weapon or armour data)
+                        if (!IsHeroFile(lines))
+                        {
+                            skippedCount++;
+                            continue;
+                        }
 
-                    loadedHeroes.Add(hero);
+                        string backupPath = path + ".original";
+                        if (!File.Exists(backupPath))
+                            File.Copy(path, backupPath);
+
+                        var hero = new HeroFile
+                        {
+                            Path = path,
+                            Lines = lines
+                        };
+
+                        hero.Weapons = ParseWeapons(hero.Lines.ToList());
+                        hero.Armours = ParseArmours(hero.Lines.ToList());
+
+                        loadedHeroes.Add(hero);
+                        loadedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        errorCount++;
+                        System.Windows.MessageBox.Show(
+                            $"Error loading file:\n{System.IO.Path.GetFileName(path)}\n\n{ex.Message}",
+                            "File Load Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
                 }
 
                 HeroesList.ItemsSource = null;
                 HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
+
+                if (skippedCount > 0 || errorCount > 0)
+                {
+                    var message = $"Loaded {loadedCount} hero file(s).";
+                    if (skippedCount > 0)
+                        message += $"\nSkipped {skippedCount} non-hero file(s) (monsters or other data).";
+                    if (errorCount > 0)
+                        message += $"\nFailed to load {errorCount} file(s) due to errors.";
+
+                    System.Windows.MessageBox.Show(
+                        message,
+                        "Load Complete",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
             }
         }
 
@@ -92,27 +151,61 @@ namespace DDStatsMod
                     string selectedFolder = dialog.SelectedPath;
                     string[] files = Directory.GetFiles(selectedFolder, "*.info.darkest", SearchOption.AllDirectories);
 
+                    int loadedCount = 0;
+                    int skippedCount = 0;
+                    int errorCount = 0;
+
                     foreach (var path in files)
                     {
-                        string backupPath = path + ".original";
-                        if (!File.Exists(backupPath))
-                            File.Copy(path, backupPath);
-
-                        var hero = new HeroFile
+                        try
                         {
-                            Path = path,
-                            Lines = File.ReadAllLines(path)
-                        };
+                            var lines = File.ReadAllLines(path);
 
-                        hero.Weapons = ParseWeapons(hero.Lines.ToList());
-                        hero.Armours = ParseArmours(hero.Lines.ToList());
+                            // Check if this is a hero file (has weapon or armour data)
+                            if (!IsHeroFile(lines))
+                            {
+                                skippedCount++;
+                                continue;
+                            }
 
-                        loadedHeroes.Add(hero);
+                            string backupPath = path + ".original";
+                            if (!File.Exists(backupPath))
+                                File.Copy(path, backupPath);
+
+                            var hero = new HeroFile
+                            {
+                                Path = path,
+                                Lines = lines
+                            };
+
+                            hero.Weapons = ParseWeapons(hero.Lines.ToList());
+                            hero.Armours = ParseArmours(hero.Lines.ToList());
+
+                            loadedHeroes.Add(hero);
+                            loadedCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            errorCount++;
+                            // Don't show individual error messages in folder mode to avoid spam
+                            // Aggregate errors will be shown in the summary
+                        }
                     }
 
                     HeroesList.ItemsSource = null;
                     HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
-                    System.Windows.MessageBox.Show($"Loaded {files.Length} files from folder:\n{selectedFolder}");
+
+                    var message = $"Loaded {loadedCount} hero file(s) from folder:\n{selectedFolder}";
+                    if (skippedCount > 0)
+                        message += $"\n\nSkipped {skippedCount} non-hero file(s) (monsters or other data).";
+                    if (errorCount > 0)
+                        message += $"\nFailed to load {errorCount} file(s) due to errors.";
+
+                    System.Windows.MessageBox.Show(
+                        message,
+                        "Load Complete",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
             }
         }
