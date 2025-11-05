@@ -78,12 +78,12 @@ Steam\steamapps\common\DarkestDungeon\heroes\[hero_name]\[hero_name].info.darkes
 Choose one of two methods:
 
 **Method A: Load Individual Files**
-1. Click **"📂 Wczytaj pliki"** (Load Files)
+1. Click **"📂 Load Files"**
 2. Select one or more `.info.darkest` files
 3. The application automatically creates `.original` backup files
 
 **Method B: Load Entire Folder**
-1. Click **"Wczytaj folder postaci"** (Load Hero Folder)
+1. Click **"Load Hero Folder"**
 2. Select your heroes folder (e.g., `...\DarkestDungeon\heroes\`)
 3. All hero files will be loaded automatically
 
@@ -96,24 +96,24 @@ Choose one of two methods:
 4. Or use tab-specific percentage modifiers
 
 **Global Modifications:**
-1. Enter a percentage in the **"Modyfikacja globalna (%)"** box (e.g., 25 for +25%)
+1. Enter a percentage in the **"Global Modification (%)"** box (e.g., 25 for +25%)
 2. Check which categories to modify:
-   - ✅ Zastosuj do broni (Apply to weapons)
-   - ✅ Zastosuj do zbroi (Apply to armor)
-   - ✅ Zastosuj do wszystkich postaci (Apply to all heroes)
+   - ✅ Apply to weapons
+   - ✅ Apply to armor
+   - ✅ Apply to all heroes
 3. Choose whether to apply from original values or current values
-4. Click **"Zastosuj %"** (Apply %)
+4. Click **"Apply %"**
 
 ### Step 4: Save Changes
 
-1. Click **"💾 Zapisz zmiany"** (Save Changes)
+1. Click **"💾 Save Changes"**
 2. All modifications are written to the game files
 3. Original values are safely stored in `.original` files
 
 ### Step 5: Reset if Needed
 
 If you want to undo changes:
-1. Click **"🔄 Resetuj"** (Reset)
+1. Click **"🔄 Reset"**
 2. Choose to reset current hero or all heroes
 3. Original values are restored in memory
 4. Click Save to write the reset to files
