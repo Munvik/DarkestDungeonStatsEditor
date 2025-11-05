@@ -63,21 +63,21 @@ namespace DarkestDungeonEditor.Services
         }
 
         /// <summary>
-        /// Aktualizuje tylko sekcje weapon: i armour: w pliku, resztę zostawia nietkniętą.
+        /// Updates only the weapon: and armour: sections in the file, leaving the rest unchanged.
         /// </summary>
         public static void UpdateWeaponsAndArmoursInFile(string filePath, List<Weapon> weapons, List<Armour> armours)
         {
             var lines = File.ReadAllLines(filePath).ToList();
 
-            // Usuń stare linie broni i zbroi
+            // Remove old weapon and armour lines
             lines.RemoveAll(l => l.TrimStart().StartsWith("weapon:") || l.TrimStart().StartsWith("armour:"));
 
-            // Znajdź miejsce, gdzie je wstawić — najlepiej po liniach resistances/crit
+            // Find the insertion point - preferably after resistances/crit lines
             int insertIndex = lines.FindIndex(l => l.StartsWith("resistances:") || l.StartsWith("crit:"));
             if (insertIndex != -1)
-                insertIndex += 2; // po tych liniach
+                insertIndex += 2;
             else
-                insertIndex = 0; // na początek, jeśli nie znaleziono
+                insertIndex = 0;
 
             var weaponLines = weapons.Select(w =>
                 $"weapon: .name \"{w.Name}\" .atk {w.Atk}% .dmg {w.DmgMin} {w.DmgMax} .crit {w.Crit}% .spd {w.Spd}" +
@@ -89,7 +89,7 @@ namespace DarkestDungeonEditor.Services
                 (a.UpgradeRequirementCode.HasValue ? $" .upgradeRequirementCode {a.UpgradeRequirementCode}" : "")
             );
 
-            // Wstaw nowe linie w miejsce starych
+            // Insert new lines
             lines.InsertRange(insertIndex, weaponLines.Concat(armourLines));
 
             File.WriteAllLines(filePath, lines);

@@ -87,7 +87,7 @@ namespace DDStatsMod
         {
             using (var dialog = new FolderBrowserDialog())
             {
-                dialog.Description = "Wybierz folder z plikami .info.darkest";
+                dialog.Description = "Select folder with .info.darkest files";
                 dialog.UseDescriptionForTitle = true;
 
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -115,7 +115,7 @@ namespace DDStatsMod
 
                     HeroesList.ItemsSource = null;
                     HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
-                    System.Windows.MessageBox.Show($"Załadowano {files.Length} plików z folderu:\n{selectedFolder}");
+                    System.Windows.MessageBox.Show($"Loaded {files.Length} files from folder:\n{selectedFolder}");
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace DDStatsMod
         {
             if (loadedHeroes.Count == 0)
             {
-                System.Windows.MessageBox.Show("Nie załadowano żadnych postaci do zapisania.");
+                System.Windows.MessageBox.Show("No characters loaded to save.");
                 return;
             }
 
@@ -147,8 +147,8 @@ namespace DDStatsMod
             }
 
             System.Windows.MessageBox.Show(
-                $"Zapisano zmiany dla wszystkich ({savedCount}) postaci.",
-                "Zapis zakończony",
+                $"Saved changes for all ({savedCount}) characters.",
+                "Save completed",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information
             );
@@ -159,7 +159,7 @@ namespace DDStatsMod
         {
             if (!double.TryParse(PercentBox.Text.Replace("%", ""), out double percent))
             {
-                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Invalid percentage value!");
                 return;
             }
 
@@ -219,7 +219,7 @@ namespace DDStatsMod
                 }
             }
 
-            // 🔥 Odświeżenie aktualnie wyświetlonego bohatera w DataGridach
+            // Refresh currently displayed hero in DataGrids
             if (HeroesList.SelectedIndex >= 0)
             {
                 var currentHero = loadedHeroes[HeroesList.SelectedIndex];
@@ -230,8 +230,8 @@ namespace DDStatsMod
             }
 
             System.Windows.MessageBox.Show(
-                "Zastosowano modyfikację procentową (bez zapisu do plików).\nAby zapisać zmiany, kliknij 'Zapisz zmiany'.",
-                "Zmiany zastosowane",
+                "Applied percentage modification (without saving to files).\nTo save changes, click 'Save changes'.",
+                "Changes applied",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -248,21 +248,20 @@ namespace DDStatsMod
 
         private void SaveHeroToFile(HeroFile hero)
         {
-            // wczytaj aktualne linie pliku (żeby zostawić resztę nietkniętą)
+            // Read current file lines (to leave the rest unchanged)
             var lines = File.ReadAllLines(hero.Path).ToList();
 
-            // Zaktualizuj linie weapon
+            // Update weapon lines
             foreach (var w in hero.Weapons)
             {
-                // znajdź indeks linii, która zawiera weapon: oraz nazwe w cudzysłowie
+                // Find the line index that contains weapon: and the name in quotes
                 int idx = lines.FindIndex(l => l.TrimStart().StartsWith("weapon:", StringComparison.OrdinalIgnoreCase)
                                               && l.Contains($"\"{w.Name}\""));
                 if (idx >= 0)
                 {
-                    // zbuduj nową wersję linii - zachowaj inne pola poza tymi co nadpisujemy
                     var old = lines[idx];
 
-                    // aktualizacje poszczególnych pól (jeżeli pole nie istnieje - dodamy je na końcu linii)
+                    // Update individual fields
                     string updated = old;
 
                     if (Regex.IsMatch(updated, @"\.dmg\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)", RegexOptions.IgnoreCase))
@@ -285,7 +284,7 @@ namespace DDStatsMod
                 }
             }
 
-            // Zaktualizuj linie armour
+            // Update armour lines
             foreach (var a in hero.Armours)
             {
                 int idx = lines.FindIndex(l => l.TrimStart().StartsWith("armour:", StringComparison.OrdinalIgnoreCase)
@@ -361,7 +360,7 @@ namespace DDStatsMod
                 if (spdMatch.Success)
                     w.Spd = ParseInt(spdMatch.Groups[1].Value);
 
-                // jeśli nie ma nazwy, pomijamy
+                // Skip if no name
                 if (!string.IsNullOrEmpty(w.Name))
                     result.Add(w);
             }
@@ -432,7 +431,7 @@ namespace DDStatsMod
         {
             if (HeroesList.SelectedIndex < 0)
             {
-                System.Windows.MessageBox.Show("Wybierz postać z listy.");
+                System.Windows.MessageBox.Show("Select a character from the list.");
                 return;
             }
 
@@ -440,14 +439,14 @@ namespace DDStatsMod
 
             if (!double.TryParse(WeaponPercentBox.Text.Replace("%", ""), out double percent))
             {
-                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Invalid percentage value!");
                 return;
             }
 
             bool fromOriginal = ChkWeaponsFromOriginal.IsChecked == true;
             List<Weapon> baseWeapons;
 
-            // ✅ Jeżeli checkbox "Od wartości oryginalnej" jest zaznaczony
+            // If "From original value" checkbox is checked
             if (fromOriginal)
             {
                 string originalPath = hero.Path + ".original";
@@ -458,7 +457,7 @@ namespace DDStatsMod
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
+                    System.Windows.MessageBox.Show("Original file (.original) not found. Using current values.");
                     baseWeapons = hero.Weapons.Select(w => CloneWeapon(w)).ToList();
                 }
             }
@@ -467,7 +466,7 @@ namespace DDStatsMod
                 baseWeapons = hero.Weapons.Select(w => CloneWeapon(w)).ToList();
             }
 
-            // ✅ Tworzymy nową listę wynikową
+            // Create new result list
             var updatedWeapons = new List<Weapon>();
 
             foreach (var baseW in baseWeapons)
@@ -487,10 +486,10 @@ namespace DDStatsMod
                 updatedWeapons.Add(newW);
             }
 
-            // ✅ Nadpisujemy broń w aktualnym bohaterze
+            // Overwrite weapons in current hero
             hero.Weapons = updatedWeapons;
 
-            // ✅ Odświeżamy UI
+            // Refresh UI
             WeaponsGrid.ItemsSource = null;
             WeaponsGrid.ItemsSource = hero.Weapons;
             WeaponsGrid.Items.Refresh();
@@ -514,7 +513,7 @@ namespace DDStatsMod
         {
             if (HeroesList.SelectedIndex < 0)
             {
-                System.Windows.MessageBox.Show("Wybierz postać z listy.");
+                System.Windows.MessageBox.Show("Select a character from the list.");
                 return;
             }
 
@@ -522,14 +521,14 @@ namespace DDStatsMod
 
             if (!double.TryParse(ArmourPercentBox.Text.Replace("%", ""), out double percent))
             {
-                System.Windows.MessageBox.Show("Niepoprawna wartość procentowa!");
+                System.Windows.MessageBox.Show("Invalid percentage value!");
                 return;
             }
 
             bool fromOriginal = ChkArmoursFromOriginal.IsChecked == true;
             List<Armour> baseArmours;
 
-            // ✅ Jeśli mamy zaznaczone "Od wartości oryginalnej"
+            // If "From original value" is checked
             if (fromOriginal)
             {
                 string originalPath = hero.Path + ".original";
@@ -540,7 +539,7 @@ namespace DDStatsMod
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Brak pliku oryginalnego (.original). Używam bieżących wartości.");
+                    System.Windows.MessageBox.Show("Original file (.original) not found. Using current values.");
                     baseArmours = hero.Armours.Select(a => CloneArmour(a)).ToList();
                 }
             }
@@ -549,7 +548,7 @@ namespace DDStatsMod
                 baseArmours = hero.Armours.Select(a => CloneArmour(a)).ToList();
             }
 
-            // ✅ Tworzymy nową listę z przeliczonymi wartościami
+            // Create new list with calculated values
             var updatedArmours = new List<Armour>();
 
             foreach (var baseA in baseArmours)
@@ -564,10 +563,10 @@ namespace DDStatsMod
                 updatedArmours.Add(newA);
             }
 
-            // ✅ Nadpisujemy zbroje w aktualnym bohaterze
+            // Overwrite armours in current hero
             hero.Armours = updatedArmours;
 
-            // ✅ Odświeżamy UI
+            // Refresh UI
             ArmoursGrid.ItemsSource = null;
             ArmoursGrid.ItemsSource = hero.Armours;
             ArmoursGrid.Items.Refresh();
@@ -590,7 +589,7 @@ namespace DDStatsMod
         {
             string originalPath = hero.Path + ".original";
             if (!File.Exists(originalPath))
-                return hero; // jeśli nie ma backupu, używamy bieżących danych
+                return hero;
 
             var copy = new HeroFile
             {
@@ -617,8 +616,8 @@ namespace DDStatsMod
 
                 RefreshView();
                 System.Windows.MessageBox.Show(
-                    "Wszystkie postacie zostały przywrócone do oryginalnych wartości w pamięci.",
-                    "Reset zakończony",
+                    "All characters have been restored to original values in memory.",
+                    "Reset completed",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
@@ -627,8 +626,8 @@ namespace DDStatsMod
                 if (HeroesList.SelectedIndex < 0)
                 {
                     System.Windows.MessageBox.Show(
-                        "Nie wybrano żadnej postaci do resetu.",
-                        "Brak wyboru",
+                        "No character selected for reset.",
+                        "No selection",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
@@ -638,15 +637,15 @@ namespace DDStatsMod
                 ResetHeroInMemory(hero);
                 RefreshView();
                 System.Windows.MessageBox.Show(
-                    $"Przywrócono oryginalne wartości dla postaci: {hero.Name} w pamięci.",
-                    "Reset zakończony",
+                    $"Restored original values for character: {hero.Name} in memory.",
+                    "Reset completed",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
 
             void RefreshView()
             {
-                // Odświeżenie widoku po resecie
+                // Refresh view after reset
                 if (HeroesList.SelectedIndex >= 0)
                 {
                     var currentHero = loadedHeroes[HeroesList.SelectedIndex];
@@ -665,23 +664,23 @@ namespace DDStatsMod
             }
         }
 
-        // Nowa metoda resetująca tylko w pamięci
+        // Method to reset only in memory
         private void ResetHeroInMemory(HeroFile hero)
         {
             string originalPath = hero.Path + ".original";
             if (!File.Exists(originalPath))
             {
-                System.Windows.MessageBox.Show($"Brak kopii oryginalnej dla {hero.Name} ({originalPath})");
+                System.Windows.MessageBox.Show($"No original backup found for {hero.Name} ({originalPath})");
                 return;
             }
 
-            // Odczytaj oryginalne dane
+            // Read original data
             var originalLines = File.ReadAllLines(originalPath).ToList();
             hero.Lines = originalLines.ToArray();
             hero.Weapons = ParseWeapons(originalLines);
             hero.Armours = ParseArmours(originalLines);
 
-            // NIE zapisujemy do pliku, zmiany są tylko w pamięci
+            // Do NOT save to file, changes are only in memory
         }
 
 
@@ -691,17 +690,17 @@ namespace DDStatsMod
             string originalPath = hero.Path + ".original";
             if (!File.Exists(originalPath))
             {
-                System.Windows.MessageBox.Show($"Brak kopii oryginalnej dla {hero.Name} ({originalPath})");
+                System.Windows.MessageBox.Show($"No original backup found for {hero.Name} ({originalPath})");
                 return;
             }
 
-            // Odczytaj oryginalne dane i nadpisz
+            // Read original data and overwrite
             var originalLines = File.ReadAllLines(originalPath).ToList();
             hero.Lines = originalLines.ToArray();
             hero.Weapons = ParseWeapons(originalLines);
             hero.Armours = ParseArmours(originalLines);
 
-            // Nadpisz zmodyfikowany plik bieżący oryginałem
+            // Overwrite modified current file with original
             File.WriteAllLines(hero.Path, originalLines);
         }
 
