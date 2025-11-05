@@ -4,6 +4,16 @@
 
 A powerful and intuitive Windows application designed to help you quickly modify hero statistics in Darkest Dungeon. Whether you want to make the game more challenging, easier, or just experiment with different stat configurations, this tool makes it fast and simple to edit all your heroes at once!
 
+## 📸 Preview
+
+![Main Interface](docs/screenshots/main-interface.png)
+*The main interface showing the hero list, weapons tab, and global modification options*
+
+![Armor Editing](docs/screenshots/armor-editing.png)
+*Armor tab with defense, protection, and HP statistics*
+
+> **Note:** Screenshots showcase the dark-themed interface with Darkest Dungeon-inspired styling, organized data grids for easy stat viewing, and intuitive controls for batch modifications.
+
 ## ✨ Features
 
 - 🎯 **Batch Editing** - Modify all heroes simultaneously with a single percentage modifier
