@@ -1,0 +1,140 @@
+﻿<Window x:Class="DDStatsMod.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Darkest Dungeon Stats Mod Tool"
+        Height="700" Width="1000"
+        Background="#1E1E1E"
+        Foreground="White">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Lewy panel: lista bohaterów i przyciski -->
+        <StackPanel Grid.Column="0" Margin="5" Background="#252526">
+            <TextBlock Text="Bohaterowie" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+            <ListBox x:Name="HeroesList"
+                     Height="400"
+                     Background="#333"
+                     Foreground="White"
+                     SelectionChanged="HeroesList_SelectionChanged"/>
+
+            <Separator Margin="0,10,0,10"/>
+
+            <Button x:Name="LoadFilesButton"
+                    Content="Wczytaj pliki"
+                    Margin="0,5,0,0"
+                    Padding="5"
+                    Click="LoadFiles_Click"/>
+
+            <Button x:Name="SaveFileButton"
+                    Content="Zapisz zmiany"
+                    Margin="0,5,0,0"
+                    Padding="5"
+                    Click="SaveFile_Click"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBox x:Name="PercentBox"
+                         Width="60"
+                         Text="10"
+                         HorizontalContentAlignment="Center"/>
+                <Button x:Name="ApplyPercentAllButton"
+                        Content="Zastosuj % do wszystkich"
+                        Margin="5,0,0,0"
+                        Padding="5"
+                        Click="ApplyPercentAll_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Prawy panel: zakładki z danymi -->
+        <Grid Grid.Column="1" Margin="10">
+            <TabControl x:Name="HeroTabs">
+                <!-- Zakładka WEAPONS -->
+                <TabItem Header="Weapons">
+                    <DataGrid x:Name="WeaponsGrid"
+              ItemsSource="{Binding SelectedWeapons}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              CanUserDeleteRows="False"
+              GridLinesVisibility="Horizontal"
+              RowBackground="#2b2b2b"
+              AlternatingRowBackground="#1f1f1f"
+              Foreground="#f0f0f0"
+              Background="#1e1e1e"
+              BorderBrush="#3c3c3c"
+              BorderThickness="1"
+              HeadersVisibility="Column"
+              HorizontalGridLinesBrush="#3c3c3c"
+              VerticalGridLinesBrush="#3c3c3c"
+              FontSize="13"
+              Margin="5"
+              SelectionMode="Single"
+              SelectionUnit="FullRow">
+
+                        <DataGrid.Resources>
+                            <!-- Styl nagłówków -->
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#333" />
+                                <Setter Property="Foreground" Value="#ddd" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="BorderBrush" Value="#444" />
+                                <Setter Property="BorderThickness" Value="0,0,1,1" />
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
+                            <DataGridTextColumn Header="Dmg Min" Binding="{Binding DmgMin}" Width="80" />
+                            <DataGridTextColumn Header="Dmg Max" Binding="{Binding DmgMax}" Width="80" />
+                            <DataGridTextColumn Header="Crit" Binding="{Binding Crit}" Width="60" />
+                            <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <TabItem Header="Armour">
+                    <DataGrid x:Name="ArmoursGrid"
+              ItemsSource="{Binding SelectedArmours}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              CanUserDeleteRows="False"
+              GridLinesVisibility="Horizontal"
+              RowBackground="#2b2b2b"
+              AlternatingRowBackground="#1f1f1f"
+              Foreground="#f0f0f0"
+              Background="#1e1e1e"
+              BorderBrush="#3c3c3c"
+              BorderThickness="1"
+              HeadersVisibility="Column"
+              HorizontalGridLinesBrush="#3c3c3c"
+              VerticalGridLinesBrush="#3c3c3c"
+              FontSize="13"
+              Margin="5"
+              SelectionMode="Single"
+              SelectionUnit="FullRow">
+
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#333" />
+                                <Setter Property="Foreground" Value="#ddd" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="BorderBrush" Value="#444" />
+                                <Setter Property="BorderThickness" Value="0,0,1,1" />
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
+                            <DataGridTextColumn Header="Def" Binding="{Binding Def}" Width="80" />
+                            <DataGridTextColumn Header="Prot" Binding="{Binding Prot}" Width="80" />
+                            <DataGridTextColumn Header="Hp" Binding="{Binding Hp}" Width="80" />
+                            <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>
