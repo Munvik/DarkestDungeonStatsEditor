@@ -2,18 +2,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Darkest Dungeon Stats Mod Tool"
-        Height="700" Width="1000"
+        Height="750" Width="1100"
         Background="#1E1E1E"
         Foreground="White">
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Lewy panel: lista bohaterów i przyciski -->
-        <StackPanel Grid.Column="0" Margin="5" Background="#252526">
+        <!-- Lewy panel -->
+        <StackPanel Grid.Column="0" Background="#252526" Margin="10">
             <TextBlock Text="Bohaterowie" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
             <ListBox x:Name="HeroesList"
                      Height="400"
@@ -35,104 +35,145 @@
                     Padding="5"
                     Click="SaveFile_Click"/>
 
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <Separator Margin="0,15,0,10"/>
+
+            <TextBlock Text="Modyfikacja globalna (%)" FontWeight="Bold" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="PercentBox"
                          Width="60"
                          Text="10"
                          HorizontalContentAlignment="Center"/>
                 <Button x:Name="ApplyPercentAllButton"
-                        Content="Zastosuj % do wszystkich"
+                        Content="Zastosuj %"
                         Margin="5,0,0,0"
                         Padding="5"
                         Click="ApplyPercentAll_Click"/>
             </StackPanel>
+
+            <!-- Checkboxy globalne -->
+            <StackPanel Margin="0,10,0,0">
+                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Zastosuj do broni" Margin="0,2,0,0"/>
+                <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Zastosuj do zbroi" Margin="0,2,0,0"/>
+                <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Zastosuj do wszystkich postaci" Margin="0,2,0,0"/>
+            </StackPanel>
         </StackPanel>
 
-        <!-- Prawy panel: zakładki z danymi -->
+        <!-- Prawy panel -->
         <Grid Grid.Column="1" Margin="10">
             <TabControl x:Name="HeroTabs">
-                <!-- Zakładka WEAPONS -->
+
+                <!-- WEAPONS -->
                 <TabItem Header="Weapons">
-                    <DataGrid x:Name="WeaponsGrid"
-              ItemsSource="{Binding SelectedWeapons}"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False"
-              CanUserDeleteRows="False"
-              GridLinesVisibility="Horizontal"
-              RowBackground="#2b2b2b"
-              AlternatingRowBackground="#1f1f1f"
-              Foreground="#f0f0f0"
-              Background="#1e1e1e"
-              BorderBrush="#3c3c3c"
-              BorderThickness="1"
-              HeadersVisibility="Column"
-              HorizontalGridLinesBrush="#3c3c3c"
-              VerticalGridLinesBrush="#3c3c3c"
-              FontSize="13"
-              Margin="5"
-              SelectionMode="Single"
-              SelectionUnit="FullRow">
+                    <DockPanel Background="#1E1E1E">
+                        <DataGrid x:Name="WeaponsGrid"
+                                  ItemsSource="{Binding SelectedWeapons}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  GridLinesVisibility="Horizontal"
+                                  RowBackground="#2b2b2b"
+                                  AlternatingRowBackground="#1f1f1f"
+                                  Foreground="#f0f0f0"
+                                  Background="#1e1e1e"
+                                  BorderBrush="#3c3c3c"
+                                  BorderThickness="1"
+                                  HeadersVisibility="Column"
+                                  HorizontalGridLinesBrush="#3c3c3c"
+                                  VerticalGridLinesBrush="#3c3c3c"
+                                  FontSize="13"
+                                  Margin="5"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  DockPanel.Dock="Top"
+                                  Height="550">
 
-                        <DataGrid.Resources>
-                            <!-- Styl nagłówków -->
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="#333" />
-                                <Setter Property="Foreground" Value="#ddd" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                                <Setter Property="BorderBrush" Value="#444" />
-                                <Setter Property="BorderThickness" Value="0,0,1,1" />
-                            </Style>
-                        </DataGrid.Resources>
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#333" />
+                                    <Setter Property="Foreground" Value="#ddd" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="BorderBrush" Value="#444" />
+                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                </Style>
+                            </DataGrid.Resources>
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
-                            <DataGridTextColumn Header="Dmg Min" Binding="{Binding DmgMin}" Width="80" />
-                            <DataGridTextColumn Header="Dmg Max" Binding="{Binding DmgMax}" Width="80" />
-                            <DataGridTextColumn Header="Crit" Binding="{Binding Crit}" Width="60" />
-                            <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
+                                <DataGridTextColumn Header="Dmg Min" Binding="{Binding DmgMin}" Width="80" />
+                                <DataGridTextColumn Header="Dmg Max" Binding="{Binding DmgMax}" Width="80" />
+                                <DataGridTextColumn Header="Crit" Binding="{Binding Crit}" Width="60" />
+                                <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Zakładkowe opcje -->
+                        <StackPanel DockPanel.Dock="Bottom" Background="#252526" Margin="10">
+                            <TextBlock Text="Zakładkowe opcje" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="WeaponPercentBox" Width="60" Text="10" HorizontalContentAlignment="Center"/>
+                                <Button Content="Zastosuj" Margin="5,0,10,0" Padding="5" Click="ApplyWeaponTabPercent_Click"/>
+                                <CheckBox x:Name="ApplyDamageCheck" IsChecked="True" Content="Damage" Margin="0,0,5,0"/>
+                                <CheckBox x:Name="ApplyCritCheck" IsChecked="True" Content="Crit" Margin="0,0,5,0"/>
+                                <CheckBox x:Name="ApplySpeedCheck" IsChecked="True" Content="Speed"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DockPanel>
                 </TabItem>
 
+                <!-- ARMOUR -->
                 <TabItem Header="Armour">
-                    <DataGrid x:Name="ArmoursGrid"
-              ItemsSource="{Binding SelectedArmours}"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False"
-              CanUserDeleteRows="False"
-              GridLinesVisibility="Horizontal"
-              RowBackground="#2b2b2b"
-              AlternatingRowBackground="#1f1f1f"
-              Foreground="#f0f0f0"
-              Background="#1e1e1e"
-              BorderBrush="#3c3c3c"
-              BorderThickness="1"
-              HeadersVisibility="Column"
-              HorizontalGridLinesBrush="#3c3c3c"
-              VerticalGridLinesBrush="#3c3c3c"
-              FontSize="13"
-              Margin="5"
-              SelectionMode="Single"
-              SelectionUnit="FullRow">
+                    <DockPanel Background="#1E1E1E">
+                        <DataGrid x:Name="ArmoursGrid"
+                                  ItemsSource="{Binding SelectedArmours}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  GridLinesVisibility="Horizontal"
+                                  RowBackground="#2b2b2b"
+                                  AlternatingRowBackground="#1f1f1f"
+                                  Foreground="#f0f0f0"
+                                  Background="#1e1e1e"
+                                  BorderBrush="#3c3c3c"
+                                  BorderThickness="1"
+                                  HeadersVisibility="Column"
+                                  HorizontalGridLinesBrush="#3c3c3c"
+                                  VerticalGridLinesBrush="#3c3c3c"
+                                  FontSize="13"
+                                  Margin="5"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  DockPanel.Dock="Top"
+                                  Height="550">
 
-                        <DataGrid.Resources>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="#333" />
-                                <Setter Property="Foreground" Value="#ddd" />
-                                <Setter Property="FontWeight" Value="Bold" />
-                                <Setter Property="BorderBrush" Value="#444" />
-                                <Setter Property="BorderThickness" Value="0,0,1,1" />
-                            </Style>
-                        </DataGrid.Resources>
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#333" />
+                                    <Setter Property="Foreground" Value="#ddd" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="BorderBrush" Value="#444" />
+                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                </Style>
+                            </DataGrid.Resources>
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
-                            <DataGridTextColumn Header="Def" Binding="{Binding Def}" Width="80" />
-                            <DataGridTextColumn Header="Prot" Binding="{Binding Prot}" Width="80" />
-                            <DataGridTextColumn Header="Hp" Binding="{Binding Hp}" Width="80" />
-                            <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*" />
+                                <DataGridTextColumn Header="Def" Binding="{Binding Def}" Width="80" />
+                                <DataGridTextColumn Header="Prot" Binding="{Binding Prot}" Width="80" />
+                                <DataGridTextColumn Header="Hp" Binding="{Binding Hp}" Width="80" />
+                                <DataGridTextColumn Header="Spd" Binding="{Binding Spd}" Width="60" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel DockPanel.Dock="Bottom" Background="#252526" Margin="10">
+                            <TextBlock Text="Zakładkowe opcje" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="ArmourPercentBox" Width="60" Text="10" HorizontalContentAlignment="Center"/>
+                                <Button Content="Zastosuj" Margin="5,0,10,0" Padding="5" Click="ApplyArmourTabPercent_Click"/>
+                                <CheckBox x:Name="ApplyHpCheck" IsChecked="True" Content="Hp" Margin="0,0,5,0"/>
+                                <CheckBox x:Name="ApplyDefCheck" IsChecked="True" Content="Def"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DockPanel>
                 </TabItem>
             </TabControl>
         </Grid>

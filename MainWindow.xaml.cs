@@ -111,27 +111,39 @@ namespace DDStatsMod
                 return;
             }
 
-            foreach (var hero in loadedHeroes)
+            var targets = ApplyAllHeroesCheck.IsChecked == true ? loadedHeroes : new List<HeroFile>();
+            if (ApplyAllHeroesCheck.IsChecked == false && HeroesList.SelectedIndex >= 0)
+                targets.Add(loadedHeroes[HeroesList.SelectedIndex]);
+
+            foreach (var hero in targets)
             {
-                foreach (var w in hero.Weapons)
+                if (ApplyWeaponsCheck.IsChecked == true)
                 {
-                    w.DmgMin = ApplyPercent(w.DmgMin, percent);
-                    w.DmgMax = ApplyPercent(w.DmgMax, percent);
-                    w.Crit = ApplyPercent(w.Crit, percent);
-                    w.Spd = ApplyPercent(w.Spd, percent);
+                    foreach (var w in hero.Weapons)
+                    {
+                        w.DmgMin = ApplyPercent(w.DmgMin, percent);
+                        w.DmgMax = ApplyPercent(w.DmgMax, percent);
+                        w.Crit = ApplyPercent(w.Crit, percent);
+                        w.Spd = ApplyPercent(w.Spd, percent);
+                    }
                 }
 
-                foreach (var a in hero.Armours)
+                if (ApplyArmoursCheck.IsChecked == true)
                 {
-                    a.Def = ApplyPercent(a.Def, percent);
-                    a.Hp = ApplyPercent(a.Hp, percent);
-                    a.Spd = ApplyPercent(a.Spd, percent);
+                    foreach (var a in hero.Armours)
+                    {
+                        a.Def = ApplyPercent(a.Def, percent);
+                        a.Hp = ApplyPercent(a.Hp, percent);
+                        a.Spd = ApplyPercent(a.Spd, percent);
+                    }
                 }
 
                 SaveHeroToFile(hero);
             }
 
-            MessageBox.Show("Zastosowano modyfikację procentową do wszystkich postaci.");
+            WeaponsGrid.Items.Refresh();
+            ArmoursGrid.Items.Refresh();
+            MessageBox.Show("Zastosowano modyfikację procentową.");
         }
 
         private static int ApplyPercent(int val, double percent)
@@ -324,6 +336,55 @@ namespace DDStatsMod
         {
             return double.TryParse(s, System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out double val) ? val : 0.0;
+        }
+
+        private void ApplyWeaponTabPercent_Click(object sender, RoutedEventArgs e)
+        {
+            if (HeroesList.SelectedIndex < 0) return;
+            var hero = loadedHeroes[HeroesList.SelectedIndex];
+
+            if (!double.TryParse(WeaponPercentBox.Text.Replace("%", ""), out double percent))
+            {
+                MessageBox.Show("Niepoprawna wartość procentowa!");
+                return;
+            }
+
+            foreach (var w in hero.Weapons)
+            {
+                if (ApplyDamageCheck.IsChecked == true)
+                {
+                    w.DmgMin = ApplyPercent(w.DmgMin, percent);
+                    w.DmgMax = ApplyPercent(w.DmgMax, percent);
+                }
+                if (ApplyCritCheck.IsChecked == true)
+                    w.Crit = ApplyPercent(w.Crit, percent);
+                if (ApplySpeedCheck.IsChecked == true)
+                    w.Spd = ApplyPercent(w.Spd, percent);
+            }
+
+            WeaponsGrid.Items.Refresh();
+        }
+
+        private void ApplyArmourTabPercent_Click(object sender, RoutedEventArgs e)
+        {
+            if (HeroesList.SelectedIndex < 0) return;
+            var hero = loadedHeroes[HeroesList.SelectedIndex];
+
+            if (!double.TryParse(ArmourPercentBox.Text.Replace("%", ""), out double percent))
+            {
+                MessageBox.Show("Niepoprawna wartość procentowa!");
+                return;
+            }
+
+            foreach (var a in hero.Armours)
+            {
+                if (ApplyHpCheck.IsChecked == true)
+                    a.Hp = ApplyPercent(a.Hp, percent);
+                if (ApplyDefCheck.IsChecked == true)
+                    a.Def = ApplyPercent(a.Def, percent);
+            }
+
+            ArmoursGrid.Items.Refresh();
         }
     }
 }
