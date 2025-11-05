@@ -297,7 +297,7 @@
                             <StackPanel>
                                 <TextBlock Text="Tab options" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="ArmourPercentBox" Width="60" Text="10" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
+                                    <TextBox x:Name="ArmourPercentBox" Width="60" Text="25" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
                                     <Button Content="Apply %"
                                             Margin="5,0,10,0"
                                             Padding="6"
