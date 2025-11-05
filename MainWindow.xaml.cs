@@ -77,65 +77,11 @@ namespace DDStatsMod
             {
                 int loadedCount = 0;
                 int skippedCount = 0;
+                int errorCount = 0;
 
                 foreach (var path in dlg.FileNames)
                 {
-                    var lines = File.ReadAllLines(path);
-
-                    // Check if this is a hero file (has weapon or armour data)
-                    if (!IsHeroFile(lines))
-                    {
-                        skippedCount++;
-                        continue;
-                    }
-
-                    string backupPath = path + ".original";
-                    if (!File.Exists(backupPath))
-                        File.Copy(path, backupPath);
-
-                    var hero = new HeroFile
-                    {
-                        Path = path,
-                        Lines = lines
-                    };
-
-                    hero.Weapons = ParseWeapons(hero.Lines.ToList());
-                    hero.Armours = ParseArmours(hero.Lines.ToList());
-
-                    loadedHeroes.Add(hero);
-                    loadedCount++;
-                }
-
-                HeroesList.ItemsSource = null;
-                HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
-
-                if (skippedCount > 0)
-                {
-                    System.Windows.MessageBox.Show(
-                        $"Loaded {loadedCount} hero file(s).\nSkipped {skippedCount} non-hero file(s) (monsters or other data).",
-                        "Load Complete",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-            }
-        }
-
-        private void LoadFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            using (var dialog = new FolderBrowserDialog())
-            {
-                dialog.Description = "Select folder with .info.darkest files";
-                dialog.UseDescriptionForTitle = true;
-
-                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    string selectedFolder = dialog.SelectedPath;
-                    string[] files = Directory.GetFiles(selectedFolder, "*.info.darkest", SearchOption.AllDirectories);
-
-                    int loadedCount = 0;
-                    int skippedCount = 0;
-
-                    foreach (var path in files)
+                    try
                     {
                         var lines = File.ReadAllLines(path);
 
@@ -162,12 +108,101 @@ namespace DDStatsMod
                         loadedHeroes.Add(hero);
                         loadedCount++;
                     }
+                    catch (Exception ex)
+                    {
+                        errorCount++;
+                        System.Windows.MessageBox.Show(
+                            $"Error loading file:\n{System.IO.Path.GetFileName(path)}\n\n{ex.Message}",
+                            "File Load Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+                }
+
+                HeroesList.ItemsSource = null;
+                HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
+
+                if (skippedCount > 0 || errorCount > 0)
+                {
+                    var message = $"Loaded {loadedCount} hero file(s).";
+                    if (skippedCount > 0)
+                        message += $"\nSkipped {skippedCount} non-hero file(s) (monsters or other data).";
+                    if (errorCount > 0)
+                        message += $"\nFailed to load {errorCount} file(s) due to errors.";
+
+                    System.Windows.MessageBox.Show(
+                        message,
+                        "Load Complete",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
+        }
+
+        private void LoadFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select folder with .info.darkest files";
+                dialog.UseDescriptionForTitle = true;
+
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string selectedFolder = dialog.SelectedPath;
+                    string[] files = Directory.GetFiles(selectedFolder, "*.info.darkest", SearchOption.AllDirectories);
+
+                    int loadedCount = 0;
+                    int skippedCount = 0;
+                    int errorCount = 0;
+
+                    foreach (var path in files)
+                    {
+                        try
+                        {
+                            var lines = File.ReadAllLines(path);
+
+                            // Check if this is a hero file (has weapon or armour data)
+                            if (!IsHeroFile(lines))
+                            {
+                                skippedCount++;
+                                continue;
+                            }
+
+                            string backupPath = path + ".original";
+                            if (!File.Exists(backupPath))
+                                File.Copy(path, backupPath);
+
+                            var hero = new HeroFile
+                            {
+                                Path = path,
+                                Lines = lines
+                            };
+
+                            hero.Weapons = ParseWeapons(hero.Lines.ToList());
+                            hero.Armours = ParseArmours(hero.Lines.ToList());
+
+                            loadedHeroes.Add(hero);
+                            loadedCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            errorCount++;
+                            // Don't show individual error messages in folder mode to avoid spam
+                            // Aggregate errors will be shown in the summary
+                        }
+                    }
 
                     HeroesList.ItemsSource = null;
                     HeroesList.ItemsSource = loadedHeroes.Select(h => h.Name);
+
+                    var message = $"Loaded {loadedCount} hero file(s) from folder:\n{selectedFolder}";
+                    if (skippedCount > 0)
+                        message += $"\n\nSkipped {skippedCount} non-hero file(s) (monsters or other data).";
+                    if (errorCount > 0)
+                        message += $"\nFailed to load {errorCount} file(s) due to errors.";
+
                     System.Windows.MessageBox.Show(
-                        $"Loaded {loadedCount} hero file(s) from folder:\n{selectedFolder}" +
-                        (skippedCount > 0 ? $"\n\nSkipped {skippedCount} non-hero file(s) (monsters or other data)." : ""),
+                        message,
                         "Load Complete",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
