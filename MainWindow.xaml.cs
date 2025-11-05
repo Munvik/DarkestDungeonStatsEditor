@@ -6,9 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
-using System.Windows.Forms;
-using System.IO;
 
 namespace DDStatsMod
 {
@@ -605,6 +602,12 @@ namespace DDStatsMod
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
+            if (loadedHeroes.Count == 0)
+            {
+                System.Windows.MessageBox.Show("No characters loaded to reset.");
+                return;
+            }
+
             bool resetAll = ResetAllCheck != null && ResetAllCheck.IsChecked == true;
 
             if (resetAll)
@@ -681,27 +684,6 @@ namespace DDStatsMod
             hero.Armours = ParseArmours(originalLines);
 
             // Do NOT save to file, changes are only in memory
-        }
-
-
-
-        private void ResetHeroToOriginal(HeroFile hero)
-        {
-            string originalPath = hero.Path + ".original";
-            if (!File.Exists(originalPath))
-            {
-                System.Windows.MessageBox.Show($"No original backup found for {hero.Name} ({originalPath})");
-                return;
-            }
-
-            // Read original data and overwrite
-            var originalLines = File.ReadAllLines(originalPath).ToList();
-            hero.Lines = originalLines.ToArray();
-            hero.Weapons = ParseWeapons(originalLines);
-            hero.Armours = ParseArmours(originalLines);
-
-            // Overwrite modified current file with original
-            File.WriteAllLines(hero.Path, originalLines);
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
