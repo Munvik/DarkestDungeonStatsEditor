@@ -10,7 +10,7 @@ namespace DarkestDungeonEditor.Models
         public List<Weapon> Weapons { get; set; } = new();
         public List<Armour> Armours { get; set; } = new();
 
-        // Kopie odniesienia (oryginały)
+        // Reference copies (originals)
         public List<Weapon> OriginalWeapons { get; set; } = new();
         public List<Armour> OriginalArmours { get; set; } = new();
     }

@@ -7,7 +7,7 @@
         Foreground="White">
 
     <Window.Resources>
-        <!-- Styl dla "Od wartości oryginalnej" -->
+        <!-- Style for "From original value" -->
         <Style x:Key="GoldenCheckBox" TargetType="CheckBox">
             <Setter Property="Foreground" Value="#FFD700"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -59,9 +59,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Lewy panel -->
+        <!-- Left panel -->
         <StackPanel Grid.Column="0" Background="#252526" Margin="10">
-            <TextBlock Text="Bohaterowie" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FFD700"/>
+            <TextBlock Text="Heroes" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Foreground="#FFD700"/>
             <ListBox x:Name="HeroesList"
                      Height="400"
                      Background="#333"
@@ -73,7 +73,7 @@
             <Separator Margin="0,10,0,10" Background="#555"/>
 
             <Button x:Name="LoadFilesButton"
-                    Content="📂 Wczytaj pliki"
+                    Content="📂 Load files"
                     Margin="0,5,0,0"
                     Padding="6"
                     Background="#444"
@@ -82,14 +82,14 @@
                     Click="LoadFiles_Click"/>
 
             <Button x:Name="LoadFolderButton"
-                    Content="Wczytaj folder postaci"
+                    Content="Load character folder"
                     Margin="0,5,0,0"
                     Padding="5"
                     Click="LoadFolderButton_Click"/>
 
 
             <Button x:Name="SaveFileButton"
-                    Content="💾 Zapisz zmiany"
+                    Content="💾 Save changes"
                     Margin="0,5,0,0"
                     Padding="6"
                     Background="#444"
@@ -99,7 +99,7 @@
 
             <Separator Margin="0,15,0,10" Background="#555"/>
 
-            <TextBlock Text="Modyfikacja globalna (%)" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,5"/>
+            <TextBlock Text="Global modification (%)" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,5"/>
             <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="PercentBox"
                          Width="60"
@@ -109,7 +109,7 @@
                          BorderBrush="#555"
                          HorizontalContentAlignment="Center"/>
                 <Button x:Name="ApplyPercentAllButton"
-                        Content="Zastosuj %"
+                        Content="Apply %"
                         Margin="5,0,0,0"
                         Padding="6"
                         Background="#444"
@@ -118,14 +118,14 @@
                         Click="ApplyPercentAll_Click"/>
             </StackPanel>
 
-            <!-- Checkboxy globalne -->
+            <!-- Global checkboxes -->
             <StackPanel Margin="0,10,0,0">
-                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Zastosuj do broni" Margin="0,2,0,0" Foreground="White"/>
-                <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Zastosuj do zbroi" Margin="0,2,0,0" Foreground="White"/>
-                <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Zastosuj do wszystkich postaci" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyWeaponsCheck" IsChecked="True" Content="Apply to weapons" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyArmoursCheck" IsChecked="True" Content="Apply to armour" Margin="0,2,0,0" Foreground="White"/>
+                <CheckBox x:Name="ApplyAllHeroesCheck" IsChecked="True" Content="Apply to all heroes" Margin="0,2,0,0" Foreground="White"/>
 
                 <CheckBox x:Name="ChkGlobalFromOriginal"
-                      Content="Od wartości oryginalnej"
+                      Content="From original value"
                       IsChecked="True"
                       Margin="20,0,0,0"
                       Foreground="#FFD700"
@@ -135,10 +135,10 @@
 
             <Separator Margin="0,15,0,10" Background="#555"/>
 
-            <TextBlock Text="Reset wartości" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6"/>
+            <TextBlock Text="Reset values" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6"/>
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="ResetButton"
-            Content="🔄 Resetuj"
+            Content="🔄 Reset"
             Width="100"
             Padding="6"
             Background="#444"
@@ -146,7 +146,7 @@
             BorderBrush="#777"
             Click="ResetButton_Click"/>
                 <CheckBox x:Name="ResetAllCheck"
-                    Content="Resetuj wszystkie"
+                    Content="Reset all"
                     IsChecked="True"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
@@ -154,7 +154,7 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- Prawy panel -->
+        <!-- Right panel -->
         <Grid Grid.Column="1" Margin="10">
             <TabControl x:Name="HeroTabs"
                         Background="#1E1E1E"
@@ -205,7 +205,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <!-- Zakładkowe opcje -->
+                        <!-- Tab options -->
                         <Border DockPanel.Dock="Bottom"
                                 Background="#2C2C2C"
                                 Padding="12"
@@ -214,10 +214,10 @@
                                 BorderThickness="1"
                                 CornerRadius="10">
                             <StackPanel>
-                                <TextBlock Text="Zakładkowe opcje" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
+                                <TextBlock Text="Tab options" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBox x:Name="WeaponPercentBox" Width="60" Text="25" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
-                                    <Button Content="Zastosuj %"
+                                    <Button Content="Apply %"
                                             Margin="5,0,10,0"
                                             Padding="6"
                                             Background="#444"
@@ -229,7 +229,7 @@
                                     <CheckBox x:Name="ApplySpeedCheck" IsChecked="True" Content="Speed" Margin="0,0,5,0" Foreground="White"/>
                                     <CheckBox x:Name="ChkWeaponsFromOriginal"
                                               IsChecked="True"
-                                              Content="Od wartości oryginalnej"
+                                              Content="From original value"
                                               Style="{StaticResource GoldenCheckBox}"
                                               Margin="20,0,0,0"
                                               Background="#333"
@@ -295,10 +295,10 @@
                                 BorderThickness="1"
                                 CornerRadius="10">
                             <StackPanel>
-                                <TextBlock Text="Zakładkowe opcje" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
+                                <TextBlock Text="Tab options" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,6" FontSize="14"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBox x:Name="ArmourPercentBox" Width="60" Text="10" Background="#2d2d2d" Foreground="White" BorderBrush="#555" HorizontalContentAlignment="Center"/>
-                                    <Button Content="Zastosuj %"
+                                    <Button Content="Apply %"
                                             Margin="5,0,10,0"
                                             Padding="6"
                                             Background="#444"
@@ -309,7 +309,7 @@
                                     <CheckBox x:Name="ApplyDefCheck" IsChecked="True" Content="Def" Margin="0,0,5,0" Foreground="White"/>
                                     <CheckBox x:Name="ChkArmoursFromOriginal"
                                               IsChecked="True"
-                                              Content="Od wartości oryginalnej"
+                                              Content="From original value"
                                               Style="{StaticResource GoldenCheckBox}"
                                               Margin="20,0,0,0"
                                               Background="#333"
