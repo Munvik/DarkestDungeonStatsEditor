@@ -24,7 +24,7 @@ namespace DDStatsMod
         private class Armour
         {
             public string Name { get; set; }
-            public double Def { get; set; }
+            public int Def { get; set; }
             public int Prot { get; set; }
             public int Hp { get; set; }
             public int Spd { get; set; }
@@ -481,7 +481,7 @@ namespace DDStatsMod
                 if (mName.Success) a.Name = mName.Groups["name"].Value;
 
                 var mDef = defRegex.Match(line);
-                if (mDef.Success) a.Def = ParseDouble(mDef.Groups["def"].Value);
+                if (mDef.Success) a.Def = ParseInt(mDef.Groups["def"].Value);
 
                 var mProt = protRegex.Match(line);
                 if (mProt.Success) a.Prot = ParseInt(mProt.Groups["prot"].Value);
